@@ -6,6 +6,8 @@ import type { ExamData, Question, Paragraph } from '@/types/game'
 
 type Phase = 'intro' | 'stage' | 'feedback' | 'complete'
 
+type AnswerResult = 'full' | 'partial' | 'wrong' | null
+
 type SentenceState = 'default' | 'selected' | 'correct' | 'wrong' | 'reveal'
 
 export default function GameClient({ exam }: { exam: ExamData }) {
@@ -14,7 +16,7 @@ export default function GameClient({ exam }: { exam: ExamData }) {
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
   const [selectedOptions, setSelectedOptions] = useState<number[]>([])
   const [selectedSentences, setSelectedSentences] = useState<string[]>([])
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
+  const [answerResult, setAnswerResult] = useState<AnswerResult>(null)
   const [score, setScore] = useState(0)
   const [showHint, setShowHint] = useState(false)
 
@@ -31,32 +33,43 @@ export default function GameClient({ exam }: { exam: ExamData }) {
   }
 
   function checkAnswer() {
-    let correct = false
+    let result: AnswerResult = 'wrong'
+    let earned = 0
+
     switch (question.type) {
       case 'multiple-choice':
-        correct = selectedOption === question.correctOption
+        result = selectedOption === question.correctOption ? 'full' : 'wrong'
         break
       case 'multi-select-options': {
-        const sortedSel = [...selectedOptions].sort().join(',')
-        const sortedCor = [...(question.correctOptions ?? [])].sort().join(',')
-        correct = sortedSel === sortedCor
+        const correctSet = question.correctOptions ?? []
+        const hits = selectedOptions.filter((i) => correctSet.includes(i)).length
+        if (hits === correctSet.length) result = 'full'
+        else if (hits > 0) result = 'partial'
+        else result = 'wrong'
         break
       }
       case 'click-text':
-        correct =
+        result =
           selectedSentences.length === 1 &&
           (question.correctSentenceIds?.includes(selectedSentences[0]) ?? false)
+            ? 'full'
+            : 'wrong'
         break
       case 'click-text-multi': {
-        const required = question.requiredSelections ?? 2
-        correct =
-          selectedSentences.length === required &&
-          selectedSentences.every((id) => question.correctSentenceIds?.includes(id) ?? false)
+        const correctSet = question.correctSentenceIds ?? []
+        const hits = selectedSentences.filter((id) => correctSet.includes(id)).length
+        if (hits === (question.requiredSelections ?? 2)) result = 'full'
+        else if (hits > 0) result = 'partial'
+        else result = 'wrong'
         break
       }
     }
-    setIsCorrect(correct)
-    if (correct) setScore((prev) => prev + question.points)
+
+    if (result === 'full') earned = question.points
+    else if (result === 'partial') earned = Math.floor(question.points / 2)
+
+    setAnswerResult(result)
+    setScore((prev) => prev + earned)
     setPhase('feedback')
   }
 
@@ -66,7 +79,7 @@ export default function GameClient({ exam }: { exam: ExamData }) {
     } else {
       setStageIndex((prev) => prev + 1)
       resetSelection()
-      setIsCorrect(null)
+      setAnswerResult(null)
       setPhase('stage')
     }
   }
@@ -119,7 +132,7 @@ export default function GameClient({ exam }: { exam: ExamData }) {
     if (phase === 'feedback') {
       if (isSelected && isInCorrectSet) return 'correct'
       if (isSelected && !isInCorrectSet) return 'wrong'
-      if (!isSelected && isInCorrectSet && !isCorrect) return 'reveal'
+      if (!isSelected && isInCorrectSet && answerResult !== 'full') return 'reveal'
       return 'default'
     }
     return isSelected ? 'selected' : 'default'
@@ -221,7 +234,7 @@ export default function GameClient({ exam }: { exam: ExamData }) {
                 setStageIndex(0)
                 setScore(0)
                 resetSelection()
-                setIsCorrect(null)
+                setAnswerResult(null)
               }}
               className="flex-1 py-3 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold rounded-xl transition-all"
             >
@@ -297,7 +310,7 @@ export default function GameClient({ exam }: { exam: ExamData }) {
               phase={phase}
               selectedOption={selectedOption}
               selectedOptions={selectedOptions}
-              isCorrect={isCorrect}
+              answerResult={answerResult}
               onOptionSelect={handleOptionSelect}
             />
 
@@ -337,14 +350,18 @@ export default function GameClient({ exam }: { exam: ExamData }) {
               <div className="space-y-3">
                 <div
                   className={`p-4 rounded-xl text-center font-bold text-lg border ${
-                    isCorrect
+                    answerResult === 'full'
                       ? 'bg-green-900/40 text-green-300 border-green-700/50'
+                      : answerResult === 'partial'
+                      ? 'bg-amber-900/40 text-amber-300 border-amber-700/50'
                       : 'bg-red-900/40 text-red-300 border-red-700/50'
                   }`}
                 >
-                  {isCorrect
+                  {answerResult === 'full'
                     ? '✓ Correct! Well done!'
-                    : '✗ Not quite right – see the correct answer highlighted in the text'}
+                    : answerResult === 'partial'
+                    ? '◑ Partially correct – 1 out of 2 (half points)'
+                    : '✗ Not quite right – see the correct answer highlighted'}
                 </div>
                 <button
                   onClick={nextStage}
@@ -442,7 +459,7 @@ function QuestionCard({
   phase,
   selectedOption,
   selectedOptions,
-  isCorrect,
+  answerResult,
   onOptionSelect,
 }: {
   question: Question
@@ -450,7 +467,7 @@ function QuestionCard({
   phase: Phase
   selectedOption: number | null
   selectedOptions: number[]
-  isCorrect: boolean | null
+  answerResult: AnswerResult
   onOptionSelect: (idx: number) => void
 }) {
   return (
