@@ -256,25 +256,28 @@ export default function GameClient({ exam }: { exam: ExamData }) {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       {/* Top bar */}
-      <div className="bg-slate-900 border-b border-slate-800 px-4 py-3">
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
-          <div>
-            <p className="text-xs text-amber-400 font-bold tracking-widest uppercase">
-              FIND YOUR WAY · BAGRUT
-            </p>
-            <p className="text-slate-400 text-xs">{exam.text.title}</p>
-          </div>
-          <div className="flex items-center gap-4">
+      <div className="bg-slate-900 border-b border-slate-800 px-4 py-2.5">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-2">
+          {/* Title – hidden on small screens to save space */}
+          <p className="hidden sm:block text-xs text-amber-400 font-bold tracking-widest uppercase truncate">
+            FIND YOUR WAY · BAGRUT
+          </p>
+          {/* Mobile: just show exam title short */}
+          <p className="sm:hidden text-xs text-amber-400 font-bold truncate max-w-[140px]">
+            {exam.text.title}
+          </p>
+
+          <div className="flex items-center gap-3 flex-shrink-0">
             <div className="text-right">
-              <p className="text-xs text-slate-500">Score</p>
-              <p className="font-bold text-amber-400">
-                {score}/{totalPoints}
+              <p className="text-xs text-slate-500 leading-none">Score</p>
+              <p className="font-bold text-amber-400 text-sm leading-tight">
+                {score}<span className="text-slate-600">/{totalPoints}</span>
               </p>
             </div>
-            <div className="text-right">
-              <p className="text-xs text-slate-500">Stage</p>
-              <p className="font-bold text-slate-200">
-                {stageIndex + 1}/{totalStages}
+            <div className="bg-slate-700 rounded-lg px-2.5 py-1 text-center">
+              <p className="text-xs text-slate-500 leading-none">Stage</p>
+              <p className="font-black text-slate-200 text-sm leading-tight">
+                {stageIndex + 1}<span className="text-slate-500">/{totalStages}</span>
               </p>
             </div>
           </div>
@@ -288,7 +291,8 @@ export default function GameClient({ exam }: { exam: ExamData }) {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto p-4 lg:p-6">
+      {/* Main content – extra bottom padding on mobile for fixed action bar */}
+      <div className="max-w-5xl mx-auto p-4 lg:p-6 pb-40 lg:pb-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
           {/* ── LEFT: Paragraph ── */}
@@ -302,7 +306,7 @@ export default function GameClient({ exam }: { exam: ExamData }) {
             selectedSentences={selectedSentences}
           />
 
-          {/* ── RIGHT: Question + Controls ── */}
+          {/* ── RIGHT: Question + desktop controls ── */}
           <div className="flex flex-col gap-4">
             <QuestionCard
               question={question}
@@ -314,71 +318,121 @@ export default function GameClient({ exam }: { exam: ExamData }) {
               onOptionSelect={handleOptionSelect}
             />
 
-            {/* Hint */}
-            {phase === 'stage' && (
-              <div>
-                {!showHint ? (
-                  <button
-                    onClick={() => setShowHint(true)}
-                    className="w-full py-2.5 border border-slate-600 hover:border-amber-500 text-slate-400 hover:text-amber-300 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2"
-                  >
-                    <span>💡</span> Show Hint
-                  </button>
-                ) : (
-                  <div className="bg-amber-950/40 border border-amber-700/40 rounded-xl p-4">
-                    <p className="text-xs font-bold text-amber-400 mb-1 uppercase tracking-widest">
-                      Hint
-                    </p>
-                    <p className="text-amber-200 text-sm leading-relaxed">{question.hint}</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Check / Next buttons */}
-            {phase === 'stage' && (
-              <button
-                onClick={checkAnswer}
-                disabled={!isCheckEnabled()}
-                className="w-full py-4 rounded-2xl font-black text-lg bg-amber-500 hover:bg-amber-400 text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-              >
-                CHECK ANSWER
-              </button>
-            )}
-
-            {phase === 'feedback' && (
-              <div className="space-y-3">
-                <div
-                  className={`p-4 rounded-xl text-center font-bold text-lg border ${
-                    answerResult === 'full'
-                      ? 'bg-green-900/40 text-green-300 border-green-700/50'
-                      : answerResult === 'partial'
-                      ? 'bg-amber-900/40 text-amber-300 border-amber-700/50'
-                      : 'bg-red-900/40 text-red-300 border-red-700/50'
-                  }`}
-                >
-                  {answerResult === 'full'
-                    ? '✓ Correct! Well done!'
-                    : answerResult === 'partial'
-                    ? '◑ Partially correct – 1 out of 2 (half points)'
-                    : '✗ Not quite right – see the correct answer highlighted'}
-                </div>
-                <button
-                  onClick={nextStage}
-                  className="w-full py-4 rounded-2xl font-black text-lg bg-amber-500 hover:bg-amber-400 text-slate-900 transition-all"
-                >
-                  {stageIndex + 1 >= totalStages ? 'SEE RESULTS 🏁' : 'NEXT STAGE →'}
-                </button>
-              </div>
-            )}
+            {/* Desktop-only controls (hidden on mobile – shown in fixed bar below) */}
+            <ActionArea
+              phase={phase}
+              showHint={showHint}
+              hint={question.hint}
+              answerResult={answerResult}
+              isCheckEnabled={isCheckEnabled()}
+              isLastStage={stageIndex + 1 >= totalStages}
+              onShowHint={() => setShowHint(true)}
+              onCheck={checkAnswer}
+              onNext={nextStage}
+              className="hidden lg:flex flex-col gap-3"
+            />
           </div>
         </div>
+      </div>
+
+      {/* ── Mobile fixed bottom action bar ── */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-slate-950/95 backdrop-blur-sm border-t border-slate-800 px-4 pt-3 pb-5">
+        <ActionArea
+          phase={phase}
+          showHint={showHint}
+          hint={question.hint}
+          answerResult={answerResult}
+          isCheckEnabled={isCheckEnabled()}
+          isLastStage={stageIndex + 1 >= totalStages}
+          onShowHint={() => setShowHint(true)}
+          onCheck={checkAnswer}
+          onNext={nextStage}
+          className="flex flex-col gap-2"
+        />
       </div>
     </div>
   )
 }
 
 // ── SUB-COMPONENTS ───────────────────────────────────────────────────────────
+
+function ActionArea({
+  phase,
+  showHint,
+  hint,
+  answerResult,
+  isCheckEnabled,
+  isLastStage,
+  onShowHint,
+  onCheck,
+  onNext,
+  className,
+}: {
+  phase: Phase
+  showHint: boolean
+  hint: string
+  answerResult: AnswerResult
+  isCheckEnabled: boolean
+  isLastStage: boolean
+  onShowHint: () => void
+  onCheck: () => void
+  onNext: () => void
+  className: string
+}) {
+  return (
+    <div className={className}>
+      {phase === 'stage' && (
+        <>
+          {!showHint ? (
+            <button
+              onClick={onShowHint}
+              className="w-full py-2.5 border border-slate-600 hover:border-amber-500 text-slate-400 hover:text-amber-300 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2"
+            >
+              <span>💡</span> Show Hint
+            </button>
+          ) : (
+            <div className="bg-amber-950/40 border border-amber-700/40 rounded-xl p-3">
+              <p className="text-xs font-bold text-amber-400 mb-1 uppercase tracking-widest">Hint</p>
+              <p className="text-amber-200 text-sm leading-relaxed">{hint}</p>
+            </div>
+          )}
+          <button
+            onClick={onCheck}
+            disabled={!isCheckEnabled}
+            className="w-full py-4 rounded-2xl font-black text-lg bg-amber-500 hover:bg-amber-400 text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+          >
+            CHECK ANSWER
+          </button>
+        </>
+      )}
+      {phase === 'feedback' && (
+        <>
+          <div
+            className={`p-3 rounded-xl text-center font-bold text-base border ${
+              answerResult === 'full'
+                ? 'bg-green-900/40 text-green-300 border-green-700/50'
+                : answerResult === 'partial'
+                ? 'bg-amber-900/40 text-amber-300 border-amber-700/50'
+                : 'bg-red-900/40 text-red-300 border-red-700/50'
+            }`}
+          >
+            {answerResult === 'full'
+              ? '✓ Correct! Well done!'
+              : answerResult === 'partial'
+              ? '◑ Partially correct – 1 out of 2 (half points)'
+              : '✗ Not quite right – see the correct answer highlighted'}
+          </div>
+          <button
+            onClick={onNext}
+            className="w-full py-4 rounded-2xl font-black text-lg bg-amber-500 hover:bg-amber-400 text-slate-900 transition-all"
+          >
+            {isLastStage ? 'SEE RESULTS 🏁' : 'NEXT STAGE →'}
+          </button>
+        </>
+      )}
+    </div>
+  )
+}
 
 function ParagraphCard({
   paragraph,
@@ -401,29 +455,32 @@ function ParagraphCard({
   const required = question.requiredSelections ?? 1
   const needsClick = question.type === 'click-text' || question.type === 'click-text-multi'
 
+  const base = 'block rounded-lg px-3 py-3 transition-all text-sm leading-snug'
   const sentenceColors: Record<SentenceState, string> = {
     default: isClickable
-      ? 'hover:bg-blue-500/20 hover:text-slate-100 cursor-pointer rounded-lg px-2 py-1 -mx-2 transition-all'
-      : 'rounded-lg px-2 py-1 -mx-2',
-    selected: 'bg-blue-500/30 text-blue-200 border border-blue-500/40 rounded-lg px-2 py-1 -mx-2',
-    correct: 'bg-green-500/30 text-green-200 border border-green-500/40 rounded-lg px-2 py-1 -mx-2',
-    wrong: 'bg-red-500/30 text-red-200 border border-red-500/40 rounded-lg px-2 py-1 -mx-2',
-    reveal: 'bg-amber-500/20 text-amber-200 border border-amber-500/40 rounded-lg px-2 py-1 -mx-2 animate-pulse',
+      ? `${base} hover:bg-blue-500/20 hover:text-slate-100 cursor-pointer active:bg-blue-500/30`
+      : `${base} cursor-default`,
+    selected: `${base} bg-blue-500/30 text-blue-200 border border-blue-500/40`,
+    correct:  `${base} bg-green-500/30 text-green-200 border border-green-500/40`,
+    wrong:    `${base} bg-red-500/30 text-red-200 border border-red-500/40`,
+    reveal:   `${base} bg-amber-500/20 text-amber-200 border border-amber-500/40 animate-pulse`,
   }
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5">
-      <div className="flex items-center justify-between mb-3">
+    <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5 flex flex-col">
+      <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <span className="text-xs font-bold text-amber-400 tracking-widest uppercase">
           Paragraph {paragraph.id}
         </span>
         {needsClick && phase === 'stage' && (
           <span className="text-xs text-slate-500">
             {question.type === 'click-text-multi'
-              ? `Select ${required - selectionCount} more`
+              ? selectionCount >= required
+                ? '✓ Ready to check'
+                : `Tap ${required - selectionCount} more`
               : selectionCount === 0
-              ? 'Click a sentence'
-              : 'Selected – check or change'}
+              ? 'Tap a sentence'
+              : '✓ Selected'}
           </span>
         )}
         {needsClick && phase === 'feedback' && (
@@ -435,16 +492,20 @@ function ParagraphCard({
         )}
       </div>
 
-      <div className="text-slate-300 text-sm leading-8 space-y-1">
+      {/* Scrollable on mobile so it doesn't push content off screen */}
+      <div className="overflow-y-auto max-h-[38vh] lg:max-h-none space-y-1">
         {paragraph.sentences.map((sentence) => {
           const state = getSentenceState(sentence.id)
           return (
             <span
               key={sentence.id}
+              role={isClickable ? 'button' : undefined}
+              tabIndex={isClickable ? 0 : undefined}
               onClick={() => onSentenceClick(sentence.id)}
-              className={`inline ${sentenceColors[state]}`}
+              onKeyDown={(e) => e.key === 'Enter' && onSentenceClick(sentence.id)}
+              className={sentenceColors[state]}
             >
-              {sentence.text}{' '}
+              {sentence.text}
             </span>
           )
         })}
