@@ -50,7 +50,11 @@ export const exam164714: ExamData = {
           },
           {
             id: 'II-s4',
-            text: 'After high school, he went on to study at a top American university, and then began a great career in computer science.',
+            text: 'After high school, he went on to study at a top American university.',
+          },
+          {
+            id: 'II-s4b',
+            text: 'He then began a great career in computer science.',
           },
           {
             id: 'II-s5',
@@ -174,11 +178,11 @@ export const exam164714: ExamData = {
       id: 4,
       type: 'click-text-multi',
       paragraphId: 'II',
-      instruction: 'Click on the sentence in the text that contains both answers.',
+      instruction: 'Click on TWO sentences in the text.',
       question: 'After high school, Luis had "wonderful opportunities." What were those opportunities? Give TWO answers from paragraph II.',
-      correctSentenceIds: ['II-s4'],
-      requiredSelections: 1,
-      hint: 'One sentence in paragraph II lists both things Luis did after high school. It mentions both his studies and his career. Find it and click it.',
+      correctSentenceIds: ['II-s4', 'II-s4b'],
+      requiredSelections: 2,
+      hint: 'Two consecutive sentences in paragraph II describe what Luis did after high school – one about his studies and one about his career. Find and click both.',
       points: 16,
     },
     {
