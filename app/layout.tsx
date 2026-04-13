@@ -33,7 +33,7 @@ export default function RootLayout({
         <body className="min-h-full flex flex-col bg-slate-950">
           <header className="w-full border-b border-slate-800 bg-slate-950/90 backdrop-blur-sm sticky top-0 z-50">
             <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-              <span className="text-amber-400 font-black text-sm tracking-widest uppercase">
+              <span className="text-violet-400 font-black text-sm tracking-widest uppercase">
                 Find Your Way
               </span>
               <AuthButton />

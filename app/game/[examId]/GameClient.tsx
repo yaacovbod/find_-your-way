@@ -164,7 +164,7 @@ export default function GameClient({ exam }: { exam: ExamData }) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6">
         <div className="max-w-xl w-full text-center">
-          <p className="text-xs text-amber-400 font-bold tracking-widest uppercase mb-2">
+          <p className="text-xs text-violet-400 font-bold tracking-widest uppercase mb-2">
             {exam.subject} · {exam.year}
           </p>
           <h1 className="text-3xl font-black text-slate-100 mb-1">{exam.text.title}</h1>
@@ -176,7 +176,7 @@ export default function GameClient({ exam }: { exam: ExamData }) {
           <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 text-left mb-8 max-h-64 overflow-y-auto">
             {exam.text.paragraphs.map((para) => (
               <p key={para.id} className="text-slate-300 text-sm leading-relaxed mb-3">
-                <span className="font-bold text-amber-400 mr-2">{para.id}</span>
+                <span className="font-bold text-violet-400 mr-2">{para.id}</span>
                 {para.sentences.map((s) => s.text).join(' ')}
               </p>
             ))}
@@ -196,7 +196,7 @@ export default function GameClient({ exam }: { exam: ExamData }) {
 
           <button
             onClick={() => setPhase('stage')}
-            className="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-black text-xl rounded-2xl transition-all"
+            className="w-full py-4 bg-violet-600 hover:bg-violet-500 text-white font-black text-xl rounded-2xl transition-all"
           >
             START GAME →
           </button>
@@ -216,11 +216,11 @@ export default function GameClient({ exam }: { exam: ExamData }) {
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6">
         <div className="max-w-md w-full text-center">
           <div className="text-6xl mb-4">{pct >= 70 ? '🎉' : '📖'}</div>
-          <h1 className="text-3xl font-black text-amber-400 mb-2">Game Complete!</h1>
+          <h1 className="text-3xl font-black text-violet-400 mb-2">Game Complete!</h1>
           <p className="text-slate-400 mb-8">{exam.text.title}</p>
 
           <div className="bg-slate-800 border border-slate-700 rounded-2xl p-8 mb-6">
-            <div className="text-7xl font-black text-amber-400 mb-1">{score}</div>
+            <div className="text-7xl font-black text-violet-400 mb-1">{score}</div>
             <div className="text-slate-400 text-lg">out of {totalPoints} points</div>
             <div className="mt-4 text-2xl font-bold text-slate-200">{pct}%</div>
             <div className="mt-2 text-slate-300 font-semibold">{grade}</div>
@@ -228,7 +228,7 @@ export default function GameClient({ exam }: { exam: ExamData }) {
             {/* Score bar */}
             <div className="mt-6 bg-slate-700 rounded-full h-3">
               <div
-                className="h-3 rounded-full bg-amber-500 transition-all"
+                className="h-3 rounded-full bg-violet-600 transition-all"
                 style={{ width: `${pct}%` }}
               />
             </div>
@@ -271,7 +271,7 @@ export default function GameClient({ exam }: { exam: ExamData }) {
             </button>
             <Link
               href="/"
-              className="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl transition-all text-center"
+              className="flex-1 py-3 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-xl transition-all text-center"
             >
               Other Exams
             </Link>
@@ -288,18 +288,18 @@ export default function GameClient({ exam }: { exam: ExamData }) {
       <div className="bg-slate-900 border-b border-slate-800 px-4 py-2.5">
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-2">
           {/* Title – hidden on small screens to save space */}
-          <p className="hidden sm:block text-xs text-amber-400 font-bold tracking-widest uppercase truncate">
+          <p className="hidden sm:block text-xs text-violet-400 font-bold tracking-widest uppercase truncate">
             FIND YOUR WAY · BAGRUT
           </p>
           {/* Mobile: just show exam title short */}
-          <p className="sm:hidden text-xs text-amber-400 font-bold truncate max-w-[140px]">
+          <p className="sm:hidden text-xs text-violet-400 font-bold truncate max-w-[140px]">
             {exam.text.title}
           </p>
 
           <div className="flex items-center gap-3 flex-shrink-0">
             <div className="text-right">
               <p className="text-xs text-slate-500 leading-none">Score</p>
-              <p className="font-bold text-amber-400 text-sm leading-tight">
+              <p className="font-bold text-violet-400 text-sm leading-tight">
                 {score}<span className="text-slate-600">/{totalPoints}</span>
               </p>
             </div>
@@ -314,7 +314,7 @@ export default function GameClient({ exam }: { exam: ExamData }) {
         {/* Progress bar */}
         <div className="max-w-5xl mx-auto mt-2 bg-slate-800 rounded-full h-1.5">
           <div
-            className="h-1.5 rounded-full bg-amber-500 transition-all duration-500"
+            className="h-1.5 rounded-full bg-violet-600 transition-all duration-500"
             style={{ width: `${((stageIndex + (phase === 'feedback' ? 1 : 0)) / totalStages) * 100}%` }}
           />
         </div>
@@ -415,20 +415,20 @@ function ActionArea({
           {!showHint ? (
             <button
               onClick={onShowHint}
-              className="w-full py-2.5 border border-slate-600 hover:border-amber-500 text-slate-400 hover:text-amber-300 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2"
+              className="w-full py-2.5 border border-slate-600 hover:border-violet-500 text-slate-400 hover:text-violet-300 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2"
             >
               <span>💡</span> Show Hint
             </button>
           ) : (
-            <div className="bg-amber-950/40 border border-amber-700/40 rounded-xl p-3">
-              <p className="text-xs font-bold text-amber-400 mb-1 uppercase tracking-widest">Hint</p>
-              <p className="text-amber-200 text-sm leading-relaxed">{hint}</p>
+            <div className="bg-violet-950/40 border border-violet-700/40 rounded-xl p-3">
+              <p className="text-xs font-bold text-violet-400 mb-1 uppercase tracking-widest">Hint</p>
+              <p className="text-violet-200 text-sm leading-relaxed">{hint}</p>
             </div>
           )}
           <button
             onClick={onCheck}
             disabled={!isCheckEnabled}
-            className="w-full py-4 rounded-2xl font-black text-lg bg-amber-500 hover:bg-amber-400 text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            className="w-full py-4 rounded-2xl font-black text-lg bg-violet-600 hover:bg-violet-500 text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
           >
             CHECK ANSWER
           </button>
@@ -441,7 +441,7 @@ function ActionArea({
               answerResult === 'full'
                 ? 'bg-green-900/40 text-green-300 border-green-700/50'
                 : answerResult === 'partial'
-                ? 'bg-amber-900/40 text-amber-300 border-amber-700/50'
+                ? 'bg-violet-900/40 text-violet-300 border-violet-700/50'
                 : 'bg-red-900/40 text-red-300 border-red-700/50'
             }`}
           >
@@ -453,7 +453,7 @@ function ActionArea({
           </div>
           <button
             onClick={onNext}
-            className="w-full py-4 rounded-2xl font-black text-lg bg-amber-500 hover:bg-amber-400 text-slate-900 transition-all"
+            className="w-full py-4 rounded-2xl font-black text-lg bg-violet-600 hover:bg-violet-500 text-white transition-all"
           >
             {isLastStage ? 'SEE RESULTS 🏁' : 'NEXT STAGE →'}
           </button>
@@ -492,13 +492,13 @@ function ParagraphCard({
     selected: `${base} bg-blue-500/30 text-blue-200 border border-blue-500/40`,
     correct:  `${base} bg-green-500/30 text-green-200 border border-green-500/40`,
     wrong:    `${base} bg-red-500/30 text-red-200 border border-red-500/40`,
-    reveal:   `${base} bg-amber-500/20 text-amber-200 border border-amber-500/40 animate-pulse`,
+    reveal:   `${base} bg-violet-600/20 text-violet-200 border border-violet-500/40 animate-pulse`,
   }
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5 flex flex-col">
       <div className="flex items-center justify-between mb-3 flex-shrink-0">
-        <span className="text-xs font-bold text-amber-400 tracking-widest uppercase">
+        <span className="text-xs font-bold text-violet-400 tracking-widest uppercase">
           Paragraph {paragraph.id}
         </span>
         {needsClick && phase === 'stage' && (
@@ -516,7 +516,7 @@ function ParagraphCard({
           <span className="text-xs text-slate-500">
             <span className="text-green-400">■</span> correct{' '}
             <span className="text-red-400">■</span> wrong{' '}
-            <span className="text-amber-400">■</span> answer
+            <span className="text-violet-400">■</span> answer
           </span>
         )}
       </div>
@@ -564,7 +564,7 @@ function QuestionCard({
     <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5">
       {/* Stage badge */}
       <div className="flex items-center gap-2 mb-4">
-        <span className="bg-amber-500 text-slate-900 text-xs font-black px-2.5 py-1 rounded-full">
+        <span className="bg-violet-600 text-slate-900 text-xs font-black px-2.5 py-1 rounded-full">
           STAGE {stageIndex + 1}
         </span>
         <span className="text-slate-500 text-xs font-semibold">
