@@ -4,15 +4,14 @@ import { useState } from 'react'
 import Link from 'next/link'
 import type { ExamData } from '@/types/game'
 
-type ModuleFilter = 'all' | 'C' | 'E'
+type ModuleFilter = 'C' | 'E'
 
 export default function ExamList({ exams }: { exams: ExamData[] }) {
-  const [active, setActive] = useState<ModuleFilter>('all')
+  const [active, setActive] = useState<ModuleFilter>('C')
 
   const filtered = exams.filter((exam) => {
     if (active === 'C') return exam.subject.includes('Module C')
-    if (active === 'E') return exam.subject.includes('Module E')
-    return true
+    return exam.subject.includes('Module E')
   })
 
   return (
@@ -22,7 +21,7 @@ export default function ExamList({ exams }: { exams: ExamData[] }) {
         <span className="text-xs font-bold tracking-widest uppercase text-slate-500 mr-1">
           Module
         </span>
-        {(['all', 'C', 'E'] as ModuleFilter[]).map((m) => (
+        {(['C', 'E'] as ModuleFilter[]).map((m) => (
           <button
             key={m}
             onClick={() => setActive(m)}
@@ -32,7 +31,7 @@ export default function ExamList({ exams }: { exams: ExamData[] }) {
                 : 'bg-transparent text-slate-400 border-slate-700 hover:border-violet-500 hover:text-violet-300'
             }`}
           >
-            {m === 'all' ? 'All' : `Module ${m}`}
+            {`Module ${m}`}
           </button>
         ))}
         <span className="ml-auto text-xs text-slate-600">
