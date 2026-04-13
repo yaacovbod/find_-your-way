@@ -18,7 +18,7 @@ export default function ExamList({ exams }: { exams: ExamData[] }) {
   return (
     <div>
       {/* Filter buttons */}
-      <div className="flex items-center gap-2 mb-5">
+      <div className="flex flex-wrap items-center gap-2 mb-5">
         <span className="text-xs font-bold tracking-widest uppercase text-slate-500 mr-1">
           Module
         </span>

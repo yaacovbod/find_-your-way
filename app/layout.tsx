@@ -30,7 +30,7 @@ export default function RootLayout({
         lang="en"
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       >
-        <body className="min-h-full flex flex-col bg-slate-950">
+        <body className="min-h-full flex flex-col bg-slate-950 overflow-x-hidden">
           <header className="w-full border-b border-slate-800 bg-slate-950/90 backdrop-blur-sm sticky top-0 z-50">
             <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
               <span className="text-violet-400 font-black text-sm tracking-widest uppercase">
