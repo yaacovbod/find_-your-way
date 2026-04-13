@@ -28,9 +28,7 @@ export default function Home() {
         {/* Score history – shown only when signed in */}
         <ScoreHistory />
 
-        <p className="text-center text-slate-600 text-xs mt-10 pb-10">
-          Ministry of Education Israel
-        </p>
+        <div className="mt-10 pb-10" />
       </div>
     </div>
   )
