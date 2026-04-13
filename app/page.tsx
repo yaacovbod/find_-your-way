@@ -1,6 +1,6 @@
-import Link from 'next/link'
 import { allExams } from '@/data/exams'
 import ScoreHistory from './components/ScoreHistory'
+import ExamList from './components/ExamList'
 
 export default function Home() {
   return (
@@ -22,37 +22,8 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Exam list */}
-        <div className="space-y-4">
-          <h2 className="text-xs font-bold tracking-widest uppercase text-slate-500 mb-3">
-            Available Exams
-          </h2>
-          {allExams.map((exam) => (
-            <Link
-              key={exam.id}
-              href={`/game/${exam.id}`}
-              className="block bg-slate-800 border border-slate-700 hover:border-amber-500 rounded-2xl p-6 transition-all hover:bg-slate-700 group"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-xs text-amber-400 font-bold tracking-widest uppercase mb-1">
-                    {exam.subject} · {exam.year}
-                  </div>
-                  <h3 className="text-lg font-bold text-slate-100 group-hover:text-amber-300 transition-colors">
-                    {exam.title}
-                  </h3>
-                  <p className="text-slate-400 text-sm mt-1">
-                    {exam.questions.length} stages ·{' '}
-                    {exam.questions.reduce((s, q) => s + q.points, 0)} points
-                  </p>
-                </div>
-                <div className="text-2xl text-slate-600 group-hover:text-amber-400 transition-colors">
-                  →
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+        {/* Exam list with module filter */}
+        <ExamList exams={allExams} />
 
         {/* Score history – shown only when signed in */}
         <ScoreHistory />
