@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import { allExams } from '@/data/exams'
+import ScoreHistory from './components/ScoreHistory'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center p-6 pt-12">
       <div className="max-w-2xl w-full">
         {/* Logo / Title */}
         <div className="text-center mb-12">
@@ -53,8 +54,11 @@ export default function Home() {
           ))}
         </div>
 
-        <p className="text-center text-slate-600 text-xs mt-10">
-          Exam #{allExams[0]?.id} · Ministry of Education Israel
+        {/* Score history – shown only when signed in */}
+        <ScoreHistory />
+
+        <p className="text-center text-slate-600 text-xs mt-10 pb-10">
+          Ministry of Education Israel
         </p>
       </div>
     </div>

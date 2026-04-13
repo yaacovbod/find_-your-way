@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { useUser } from '@clerk/nextjs'
 import type { ExamData, Question, Paragraph } from '@/types/game'
 
 type Phase = 'intro' | 'stage' | 'feedback' | 'complete'
@@ -11,6 +12,7 @@ type AnswerResult = 'full' | 'partial' | 'wrong' | null
 type SentenceState = 'default' | 'selected' | 'correct' | 'wrong' | 'reveal'
 
 export default function GameClient({ exam }: { exam: ExamData }) {
+  const { isSignedIn } = useUser()
   const [phase, setPhase] = useState<Phase>('intro')
   const [stageIndex, setStageIndex] = useState(0)
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
@@ -19,11 +21,27 @@ export default function GameClient({ exam }: { exam: ExamData }) {
   const [answerResult, setAnswerResult] = useState<AnswerResult>(null)
   const [score, setScore] = useState(0)
   const [showHint, setShowHint] = useState(false)
+  const scoreSavedRef = useRef(false)
 
   const totalStages = exam.questions.length
   const question = exam.questions[stageIndex]
   const paragraph = exam.text.paragraphs.find((p) => p.id === question?.paragraphId)
   const totalPoints = exam.questions.reduce((s, q) => s + q.points, 0)
+
+  useEffect(() => {
+    if (phase !== 'complete' || !isSignedIn || scoreSavedRef.current) return
+    scoreSavedRef.current = true
+    fetch('/api/scores', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        examId: exam.id,
+        examTitle: exam.text.title,
+        score,
+        totalPoints,
+      }),
+    }).catch(() => {})
+  }, [phase, isSignedIn, exam.id, exam.text.title, score, totalPoints])
 
   function resetSelection() {
     setSelectedOption(null)
@@ -216,6 +234,16 @@ export default function GameClient({ exam }: { exam: ExamData }) {
             </div>
           </div>
 
+          {/* Save score notice */}
+          {!isSignedIn && (
+            <p className="text-slate-500 text-xs mb-4">
+              Sign in to save your scores and track your progress.
+            </p>
+          )}
+          {isSignedIn && (
+            <p className="text-green-500 text-xs mb-4">Score saved to your account.</p>
+          )}
+
           {/* Per-question breakdown */}
           <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 mb-6 text-left">
             <p className="text-xs text-slate-500 uppercase tracking-widest font-bold mb-3">Stages</p>
@@ -235,6 +263,7 @@ export default function GameClient({ exam }: { exam: ExamData }) {
                 setScore(0)
                 resetSelection()
                 setAnswerResult(null)
+                scoreSavedRef.current = false
               }}
               className="flex-1 py-3 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold rounded-xl transition-all"
             >
