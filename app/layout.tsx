@@ -40,6 +40,9 @@ export default function RootLayout({
             </div>
           </header>
           <main className="flex-1 flex flex-col">{children}</main>
+          <footer className="w-full border-t border-slate-800 py-3 text-center text-slate-500 text-xs">
+            The game was created by Yaacov Kedem
+          </footer>
         </body>
       </html>
     </ClerkProvider>
